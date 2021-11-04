@@ -1,0 +1,61 @@
+---
+title: "Assignment 4 - Task 2 - Bonanza Creek LTER Hares"
+author: "Karina Johnston"
+date: "11/3/2021"
+output: 
+  html_document: 
+    toc: yes
+    theme: cerulean
+---
+
+```{r setup, include = TRUE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+# Attach packages
+library(tidyverse)
+library(here)
+library(equatiomatic)
+```
+
+## Introduction
+
+Bonanza Creek LTER is part of the US Long Term Ecological Research Network. In this report, the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. 
+
+
+```{r}
+
+```
+
+
+## Data and Analyses
+
+
+
+## Juvenile Hare Initial Investigation
+
+
+
+### Annual juvenile hare trap counts
+
+
+
+### Visualize juvenile hare weights
+
+
+
+### Juvenile weight comparison 
+
+
+### Relationship between juvenile weight and hind foot length
+
+
+
+## Summary of Findings
+
+
+
+## Citations
+
+Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
+
+
