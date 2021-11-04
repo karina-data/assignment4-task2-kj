@@ -23,7 +23,8 @@ Bonanza Creek LTER is part of the US Long Term Ecological Research Network. In t
 
 
 ```{r}
-
+# read in the data from the .csv file
+bonanza_hares <- read_csv(here("data", "bonanza_hares.csv"))
 ```
 
 
@@ -31,7 +32,7 @@ Bonanza Creek LTER is part of the US Long Term Ecological Research Network. In t
 
 
 
-## Juvenile Hare Initial Investigation
+### Juvenile Hare Initial Investigation
 
 
 
@@ -44,6 +45,7 @@ Bonanza Creek LTER is part of the US Long Term Ecological Research Network. In t
 
 
 ### Juvenile weight comparison 
+
 
 
 ### Relationship between juvenile weight and hind foot length
