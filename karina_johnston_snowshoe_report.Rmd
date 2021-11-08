@@ -1,5 +1,6 @@
 ---
-title: "Assignment 4 - Task 2 - Bonanza Creek LTER Hares"
+title: "Bonanza Creek Hares Report"
+subtitle: "Assignment 4 - Task 2"
 author: "Karina Johnston"
 date: "11/3/2021"
 output: 
@@ -8,18 +9,20 @@ output:
     theme: cerulean
 ---
 
-```{r setup, include = TRUE, warning = FALSE, message = FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 # Attach packages
 library(tidyverse)
 library(here)
 library(equatiomatic)
+library(lubridate)
+library(kableExtra)
 ```
 
 ## Introduction
 
-Bonanza Creek LTER is part of the US Long Term Ecological Research Network. In this report, the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. 
+Bonanza Creek Long Term Ecological Research (LTER) program is part of the US LTER Network. In this report, the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. Snowshoe hares, *Lepus americanus*, are a 'keystone' prey species in northern boreal forests (Kielland et al. 2017). **INSERT SENTENCES ABOUT WHAT IS IN THIS REPORT.**
 
 
 ```{r}
@@ -30,25 +33,60 @@ bonanza_hares <- read_csv(here("data", "bonanza_hares.csv"))
 
 ## Data and Analyses
 
+Capture-recapture studies were conducted on snowshoe hares at five sites in the Tanana Valley. 
 
 
-### Juvenile Hare Initial Investigation
+#### Juvenile hare initial investigation
+
+```{r, fig.cap = "**Figure 1.** Juvenile Bonanza Creek hare counts by year (1998 - 2012). Data: Kielland et al. 2017."}
+bonanza_newdates <- bonanza_hares %>%  # creates a new dataframe beginning with bonanza_hares
+  mutate(date_new = mdy(date)) %>%  # creates a new column using `lubridate::mdy()`
+  mutate(year_new = year(date_new))  # creats a new year column
+
+bonanza_juveniles <- bonanza_newdates %>% # creates a new dataframe filtering for juveniles
+  filter(age == "j")
+
+bonanza_stats <- bonanza_juveniles %>% # groups by year and counts the number by year
+  group_by(year_new) %>% 
+  summarize(count = n())
+
+# this code chunk outputs a visualization bar graph for the counts by year data
+bonanza_count <- ggplot(data = bonanza_stats, aes(x = year_new, y = count)) +
+  geom_col(fill = "blue") + # so the bars are not grey
+  theme_classic() + # for a cleaner graph with no gridlines
+  labs(x = "Year", y = "Number of juvenile hares") + # to have formal axis labels 
+  scale_x_continuous(breaks = 1999:2012) # to clean up the x-axis labels
+
+bonanza_count
+```
+
+
+```{r}
+
+```
 
 
 
-### Annual juvenile hare trap counts
+Mean annual number of juvenile hares trapped was XXX $\pm$ XXXX (mean $\pm$ SD)
+
+#### Annual juvenile hare trap counts
 
 
 
-### Visualize juvenile hare weights
+#### Visualize juvenile hare weights
+
+weight_male <- hares %>% # creates a new dataframe 
+filter(sex == "m") %>%# to filter male weights only
+drop_na(weight) # to drop the NAs
+pull(weight) # to pull a vector of just weights
 
 
 
-### Juvenile weight comparison 
+#### Juvenile weight comparison 
 
 
 
-### Relationship between juvenile weight and hind foot length
+#### Relationship between juvenile weight and hind foot length
 
 
 
