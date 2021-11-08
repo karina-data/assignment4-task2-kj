@@ -38,7 +38,7 @@ Capture-recapture studies were conducted on snowshoe hares at five sites in the 
 
 #### Juvenile hare initial investigation
 
-```{r, fig.cap = "**Figure 1.** Juvenile Bonanza Creek hare counts by year (1998 - 2012). Data: Kielland et al. 2017."}
+```{r, fig.cap = "**Figure 1.** Juvenile Bonanza Creek hare counts by year (1998 - 2012). Data: Kielland et al. 2017.", fig.align = "center"}
 bonanza_newdates <- bonanza_hares %>%  # creates a new dataframe beginning with bonanza_hares
   mutate(date_new = mdy(date)) %>%  # creates a new column using `lubridate::mdy()`
   mutate(year_new = year(date_new))  # creats a new year column
@@ -52,19 +52,23 @@ bonanza_stats <- bonanza_juveniles %>% # groups by year and counts the number by
 
 # this code chunk outputs a visualization bar graph for the counts by year data
 bonanza_count <- ggplot(data = bonanza_stats, aes(x = year_new, y = count)) +
-  geom_col(fill = "blue") + # so the bars are not grey
+  geom_col(fill = "cyan4") + # so the bars are not grey
   theme_classic() + # for a cleaner graph with no gridlines
   labs(x = "Year", y = "Number of juvenile hares") + # to have formal axis labels 
   scale_x_continuous(breaks = 1999:2012) # to clean up the x-axis labels
 
 bonanza_count
+
+max_count <- max(bonanza_stats$count)
+min_count <- min(bonanza_stats$count)
+mean_count <- mean(bonanza_stats$count)
+sd_count <- sd(bonanza_stats$count)
+median <- median(bonanza_stats$count)
 ```
 
+Distribution of juvenile hare counts was positively skewed. 
 
-```{r}
-
-```
-
+`r max_count`
 
 
 Mean annual number of juvenile hares trapped was XXX $\pm$ XXXX (mean $\pm$ SD)
