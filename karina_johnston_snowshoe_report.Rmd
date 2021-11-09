@@ -18,6 +18,7 @@ library(here)
 library(equatiomatic)
 library(lubridate)
 library(kableExtra)
+library(broom)
 ```
 
 ## Introduction
@@ -106,7 +107,7 @@ ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, color = sex)) +
   theme(plot.title = element_text(hjust = 0.5), # centered title
         panel.grid = element_blank()) + # removes gridlines
   
-  guides(fill = FALSE) # removes unnecessary legend
+  guides(color = "none", alpha = "none") # removes unnecessary legends
 ```
 
 ```{r, fig.cap = "Figure 3. INSERT!!!!!!!"}
@@ -121,23 +122,115 @@ ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, fill = sex)) +
   theme_bw() + # cleaner graph aesthetics
   theme(plot.title = element_text(hjust = 0.5), # centered title
         panel.grid = element_blank()) + # removes gridlines
-  labs(x = "Sex", y = "Weight (g)") # cleans up axes labels
-
+  labs(x = "Sex", y = "Weight (g)") + # cleans up axes labels
+  
+  guides(fill = "none") # removes unnecessary legend
 ```
 
+INSERT MAIN TAKEAWAY TEXT. (both raw data (Figure 2) and summary statistics (Figure 3))
 
 
 #### Juvenile weight comparison 
 
+```{r, include = FALSE}
 
-weight_male <- hares %>% # creates a new dataframe 
-filter(sex == "m") %>%# to filter male weights only
-drop_na(weight) # to drop the NAs
-pull(weight) # to pull a vector of just weights
+# exploratory histogram
+ggplot(data = bonanza_juveniles, aes(x = weight)) +
+  geom_histogram(bins = 12) +
+  facet_wrap(~ sex) +
+  theme_classic()
+
+# exploratory q-q plot
+ggplot(data = bonanza_juveniles, aes(sample = weight)) +
+  geom_qq() +
+  facet_wrap(~ sex) +
+  theme_classic()
+```
 
 
+```{r}
+# these functions group by sex and produce the summary statistics (rounded)
+hare_weight_stats <- bonanza_juveniles %>% 
+  group_by(sex) %>% 
+  summarize(mean_weight = round(mean(weight), 2),
+            sd_weight = round(sd(weight), 2),
+            sample_size = n())
+
+# these functions update the table to be cleaner, easier to read, and visually appealing
+kable(hare_weight_stats,
+      col.names = c("Sex", # changes the column names
+                    "Mean Weight (g)", 
+                    "Standard Deviation (g)",
+                    "Sample Size"),
+      align = "lccc", # changes the alignment of the columns
+    
+# adds a caption
+      caption = "Table 1. Summary statistics for juvenile male and female snowshoe hare weights (g) at Bonanza Creek 1998-2012 (Johnston).") %>% 
+
+# better lines within the table
+kable_classic(full_width = F)
+```
+
+
+t-test and effect size
+
+```{r}
+weight_male <- bonanza_juveniles %>% # creates a new dataframe for male weights
+  filter(sex == "m") %>% # to filter male weights
+  drop_na(weight) %>% # to drop the NAs
+  pull(weight) # to pull a vector of just weights (easier for t-test)
+  
+weight_female <- bonanza_juveniles %>%# creates a new dataframe for female weights
+  filter(sex =="f") %>% # to filter female weights
+  drop_na(weight) %>% # to drop NAs
+  pull(weight) # to pull a vector of just weights (easier for t-test)
+
+# execute the t-test
+weight_ttest <- t.test(weight_male, weight_female)
+weight_ttest # output t-test results
+
+# execute the cohen d test (for effect size)
+weight_cohen_d <- cohen.d(weight_male, weight_female)
+weight_cohen_d # output the cohen d results
+```
+
+Effect size was small (Cohen's *d* = `r round(weight_cohen_d$estimate, 2)`)
 
 #### Relationship between juvenile weight and hind foot length
+
+```{r, fig.cap = "Figure 4. INSERT !!!!!!!!!!!"}
+
+# create a scatterplot of hindfoot length to weight of juvenile hares (all)
+ggplot(data = bonanza_juveniles, aes(x = hindft, 
+                                     y = weight)) + 
+  geom_point(aes(alpha = 0.9), # changes transparency and size
+             size = 3,
+             color = 4) + # changes color to blue
+  theme_classic() + # cleaner graph output
+  labs(x = "Hind foot length (mm)", y = "Weight (g)") +
+  guides(color = FALSE, size = FALSE, alpha = FALSE) # removes unnecessary legend
+
+```
+
+```{r}
+# correlation test
+hare_cor <- cor.test(bonanza_juveniles$weight, bonanza_juveniles$hindft)
+hare_cor
+```
+
+
+```{r, include = FALSE}
+# linear model, stored as hare_lm
+hare_lm <- lm(weight ~ hindft, data = bonanza_juveniles)
+
+#output results of the linear model
+summary(hare_lm)
+
+# show the visualizations to consider the model assumptions
+plot(hare_lm)
+```
+
+moderate correlation (Pearson's correlation: *r* = `r round(hare_cor$estimate, 2)`), t(`r hare_cor$parameter`) = `r round(hare_cor$statistic, 2)`.
 
 
 
