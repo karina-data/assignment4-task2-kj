@@ -248,6 +248,18 @@ moderate correlation (Pearson's correlation: *r* = `r round(hare_cor$estimate, 2
 
 ## Citations
 
+Grolemund, Garrett, and Hadley Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical Software, 40(3), 1-25. URL https://www.jstatsoft.org/v40/i03/.
+
 Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
 
+Müller, Kirill (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1. https://CRAN.R-project.org/package=here
 
+R Core Team (2021). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+Torchiano M (2020). effsize: Efficient Effect Size Computation. doi: 10.5281/zenodo.1480624 (URL:
+https://doi.org/10.5281/zenodo.1480624), R package version 0.8.1, <URL:
+https://CRAN.R-project.org/package=effsize>.
+
+Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
+
+Zhu, Hao (2021). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version 1.3.4. https://CRAN.R-project.org/package=kableExtra
