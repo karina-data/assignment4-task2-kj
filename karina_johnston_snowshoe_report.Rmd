@@ -22,7 +22,9 @@ library(kableExtra)
 
 ## Introduction
 
-Bonanza Creek Long Term Ecological Research (LTER) program is part of the US LTER Network. In this report, the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. Snowshoe hares, *Lepus americanus*, are a 'keystone' prey species in northern boreal forests (Kielland et al. 2017). **INSERT SENTENCES ABOUT WHAT IS IN THIS REPORT.**
+Bonanza Creek Long Term Ecological Research (LTER) program is part of the US LTER Network. In this report, the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. Snowshoe hares, *Lepus americanus*, are a 'keystone' prey species in northern boreal forests (Kielland et al. 2017). **INSERT SENTENCES ABOUT WHAT IS IN THIS REPORT.** 
+
+Data are provided by the Bonanza Creek LTER, a partnership between the University of Alaska Fairbanks, and the U.S. Forest Service. Significant funding for collection of these data was provided by the National Science Foundation Long-Term Ecological Research program (NSF Grant numbers DEB-1636476, DEB-1026415, DEB-0620579, DEB-0423442, DEB-0080609, DEB-9810217, DEB-9211769, DEB-8702629) and by the USDA Forest Service, Pacific Northwest Research Station (Agreement # RJVA-PNW-01-JV-11261952-231).
 
 
 ```{r}
@@ -36,9 +38,13 @@ bonanza_hares <- read_csv(here("data", "bonanza_hares.csv"))
 Capture-recapture studies were conducted on snowshoe hares at five sites in the Tanana Valley. 
 
 
-#### Juvenile hare initial investigation
+### Juvenile hare initial investigation
+
+#### Annual juvenile hare trap counts
+
 
 ```{r, fig.cap = "**Figure 1.** Juvenile Bonanza Creek hare counts by year (1998 - 2012). Data: Kielland et al. 2017.", fig.align = "center"}
+
 bonanza_newdates <- bonanza_hares %>%  # creates a new dataframe beginning with bonanza_hares
   mutate(date_new = mdy(date)) %>%  # creates a new column using `lubridate::mdy()`
   mutate(year_new = year(date_new))  # creats a new year column
@@ -59,34 +65,75 @@ bonanza_count <- ggplot(data = bonanza_stats, aes(x = year_new, y = count)) +
 
 bonanza_count
 
-max_count <- max(bonanza_stats$count)
-min_count <- min(bonanza_stats$count)
-mean_count <- mean(bonanza_stats$count)
-sd_count <- sd(bonanza_stats$count)
-median <- median(bonanza_stats$count)
+# this code chunk outputs summary statistics for in-line use
+max_count <- max(bonanza_stats$count) # to find the maximum count value
+min_count <- min(bonanza_stats$count) # to find the minimum count value
+mean_count <- mean(bonanza_stats$count) # to find the mean count across years
+sd_count <- sd(bonanza_stats$count) # to find the standard deviation across years
+median_count <- median(bonanza_stats$count) # to find the median count
 ```
 
 Distribution of juvenile hare counts was positively skewed. 
 
-`r max_count`
+maximum count (`r max_count`), minimum count (`r min_count`), mean count (`r round(mean_count, 2)` $\pm$ `r round(sd_count, 2)`), median count (`r median_count`)
 
 
 Mean annual number of juvenile hares trapped was XXX $\pm$ XXXX (mean $\pm$ SD)
 
-#### Annual juvenile hare trap counts
-
-
 
 #### Visualize juvenile hare weights
+
+```{r, fig.cap = "Figure 2. INSERT!!!!!"}
+
+# new facet label names for site ("grid") variable
+site.labs <- c("Black Spruce", "Bonanza Mature", "Bonanza Riparian")
+names(site.labs) <- c("bonbs", "bonmat", "bonrip")
+
+# new label names for sex (x-variable)
+sex.labs <- c("Female", "Male", "N/A")
+names(sex.labs) <- c("f", "m", "NA")
+
+# create a jitterplot using bonanza_juveniles dataframe
+ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, color = sex)) +
+  geom_jitter(aes(alpha = 0.9), 
+              size = 2.5) +  # change the size and transparency of the points
+  facet_grid(~ grid,
+             labeller = labeller(grid = site.labs, 
+                                 sex = sex.labs)) + # change label names
+
+  labs(x = "Sex", y = "Weight (g)") +
+  theme_bw() + # cleans up the aesthetics of the overall theme
+  theme(plot.title = element_text(hjust = 0.5), # centered title
+        panel.grid = element_blank()) + # removes gridlines
+  
+  guides(fill = FALSE) # removes unnecessary legend
+```
+
+```{r, fig.cap = "Figure 3. INSERT!!!!!!!"}
+
+# create a boxplot using bonanza_juveniles dataframe
+ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, fill = sex)) +
+  geom_boxplot() +
+
+# facets by site (grid) and relabels sites and x-axis
+  facet_grid(~ grid,
+             labeller = labeller(grid = site.labs)) +
+  theme_bw() + # cleaner graph aesthetics
+  theme(plot.title = element_text(hjust = 0.5), # centered title
+        panel.grid = element_blank()) + # removes gridlines
+  labs(x = "Sex", y = "Weight (g)") # cleans up axes labels
+
+```
+
+
+
+#### Juvenile weight comparison 
+
 
 weight_male <- hares %>% # creates a new dataframe 
 filter(sex == "m") %>%# to filter male weights only
 drop_na(weight) # to drop the NAs
 pull(weight) # to pull a vector of just weights
-
-
-
-#### Juvenile weight comparison 
 
 
 
