@@ -19,6 +19,7 @@ library(equatiomatic)
 library(lubridate)
 library(kableExtra)
 library(broom)
+library(effsize)
 ```
 
 ## Introduction
@@ -102,6 +103,10 @@ ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, color = sex)) +
              labeller = labeller(grid = site.labs, 
                                  sex = sex.labs)) + # change label names
 
+  # mutate(grid = case_when(grid == "m" ~ "Male",
+   #               grid == ))
+  # or use recode_factor() to change just the column header - set it equal to the column
+  
   labs(x = "Sex", y = "Weight (g)") +
   theme_bw() + # cleans up the aesthetics of the overall theme
   theme(plot.title = element_text(hjust = 0.5), # centered title
@@ -152,8 +157,8 @@ ggplot(data = bonanza_juveniles, aes(sample = weight)) +
 # these functions group by sex and produce the summary statistics (rounded)
 hare_weight_stats <- bonanza_juveniles %>% 
   group_by(sex) %>% 
-  summarize(mean_weight = round(mean(weight), 2),
-            sd_weight = round(sd(weight), 2),
+  summarize(mean_weight = round(mean(weight, na.rm = TRUE), 2),
+            sd_weight = round(sd(weight, na.rm = TRUE), 2),
             sample_size = n())
 
 # these functions update the table to be cleaner, easier to read, and visually appealing
@@ -174,7 +179,7 @@ kable_classic(full_width = F)
 
 t-test and effect size
 
-```{r}
+```{r, include = FALSE}
 weight_male <- bonanza_juveniles %>% # creates a new dataframe for male weights
   filter(sex == "m") %>% # to filter male weights
   drop_na(weight) %>% # to drop the NAs
@@ -225,7 +230,10 @@ hare_lm <- lm(weight ~ hindft, data = bonanza_juveniles)
 
 #output results of the linear model
 summary(hare_lm)
+```
 
+
+```{r, include = FALSE}
 # show the visualizations to consider the model assumptions
 plot(hare_lm)
 ```
