@@ -24,7 +24,7 @@ library(effsize) # for Cohen's d effect size
 
 ## Introduction
 
-Snowshoe hares, *Lepus americanus*, are a keystone prey species in northern boreal forests (Kielland et al. 2017); hare populations have been known to vary seasonally and in response to changing conditions such as food availability (Feierabend et al. 2014). Snowshoe hare population abundance and density in Alaska are studied by the Bonanza Creek Long Term Ecological Research (LTER) program, which is part of the US LTER Network (https://www.lter.uaf.edu/). Hare population estimates are monitored in conjunction with other snowshoe hare population estimates by federal agencies based on pellet and road counts elsewhere within the state (Bonanza LTER website). In this report, the counts, sizes, and other characteristics of juvenile snowshoe hares recorded in a database from 1998 - 2012 will be explored. 
+Snowshoe hares, *Lepus americanus*, are a keystone prey species in northern boreal forests (Kielland et al. 2017); hare populations have been known to vary seasonally and in response to changing conditions such as food availability (Feierabend et al. 2014). Snowshoe hare population abundance and density in Alaska are studied by the Bonanza Creek Long Term Ecological Research (LTER) program, which is part of the US LTER Network (https://www.lter.uaf.edu/). Hare population estimates are monitored in conjunction with other snowshoe hare population estimates by federal agencies based on pellet and road counts elsewhere within the state (Bonanza LTER website). In this report, the counts, sizes, and other characteristics of juvenile snowshoe hares recorded in a database from 1998-2012 will be explored. 
 
 ```{r, include = FALSE}
 # read in the data from the .csv file
@@ -37,15 +37,14 @@ Kielland et al. (2017) open source LTER data are used from a capture-recapture s
 
 Data are provided by the Bonanza Creek LTER, a partnership between the University of Alaska Fairbanks, and the U.S. Forest Service. Experimental design and data collection methods can be found in Flora (2002). Significant funding for collection of these data was provided by the National Science Foundation Long-Term Ecological Research program (NSF Grant numbers DEB-1636476, DEB-1026415, DEB-0620579, DEB-0423442, DEB-0080609, DEB-9810217, DEB-9211769, DEB-8702629) and by the USDA Forest Service, Pacific Northwest Research Station (Agreement # RJVA-PNW-01-JV-11261952-231).
 
-Specific relationships and visualizations that will be explored for juvenile hares include annual counts, juvenile weights (g) by sex and site location, and an exploratory analysis to look at the potential relationship between juvenile weights (g) and hind foot length (mm). 
-<br>
+Specific relationships and visualizations that will be explored for juvenile hares include annual counts, juvenile weights (g) by sex and site location, and an exploratory analysis to look at the potential relationship between juvenile weights (g) and hind foot length (mm) using correlation and a linear regression model. A significance level ($\alpha$) of 0.05 is used throughout the report. All analyses are in R Version 4.0.2 using RStudio Version 1.4.1717.
 
 #### Annual juvenile hare trap counts
 
 The total number of juvenile snowshoe hare trappings are counted for each year of the study (1998 - 2012) in Figure 1. 
 <br>
 
-```{r, fig.cap = "**Figure 1.** Juvenile Bonanza Creek hare counts by year (1998 - 2012). Data: Kielland et al. 2017.", fig.align = "center"}
+```{r, fig.cap = "**Figure 1.** Juvenile Bonanza Creek hare counts by year (1998-2012). Data: Kielland et al. 2017.", fig.align = "center"}
 
 # this code chunk mutates the data such that years will be cleanly organized 
 bonanza_newdates <- bonanza_hares %>%  # creates a new dataframe beginning with bonanza_hares
@@ -82,7 +81,6 @@ median_count <- median(bonanza_stats$count) # to find the median count
 Counts of trapped juvenile hares over time were positively skewed, but varied by year with a range of `r min_count` to `r max_count` (min to max). Total trapping counts were generally found to decrease over time, although the data were variable by year. Summary statistics for the annual count totals were also calculated including median annual hare count (`r median_count`) and mean annual hare count (`r round(mean_count, 2)` $\pm$ `r round(sd_count, 2)`) (mean $\pm$ standard deviation). Since the data are heavily weighted by the highest counts in earlier years, the median value may be a more representative measure of central tendency.
 
 The data are presented as absolute counts; therefore, to standardize the results and provide a more representative trend in a future analysis, the counts could be weighted by unit effort. For example, data could be presented as count/number of traps per unit area.
-<br>
 
 #### Visualize juvenile hare weights
 
@@ -175,7 +173,7 @@ kable(hare_weight_stats,
       align = "lccc", # changes the alignment of the columns
     
 # adds a caption
-      caption = "Table 1. Summary statistics for juvenile male and female snowshoe hare weights (g) at Bonanza Creek 1998-2012 (Data: Kielland et al. 2017).") %>% 
+      caption = "Table 1. Summary descriptive statistics for mean juvenile male and female snowshoe hare weights (g) at Bonanza Creek 1998-2012 (Data: Kielland et al. 2017).") %>% 
 
 # better lines within the table
 kable_classic(full_width = FALSE)
@@ -201,10 +199,9 @@ weight_cohen_d <- cohen.d(weight_male, weight_female)
 weight_cohen_d # output the cohen d results
 ```
 
-Female mean snowshoe hare weight (`r hare_weight_stats$mean_weight[1]` $\pm$ `r hare_weight_stats$sd_weight[1]`) was found to be significantly lower than male mean hare weight (`r hare_weight_stats$mean_weight[2]` $\pm$ `r hare_weight_stats$sd_weight[2]`) (mean $\pm$ standard deviation) (t-test: t(`r round(weight_ttest$parameter, 1)`) = `r round(weight_ttest$statistic, 3)`; p = `r round(weight_ttest$p.value, 3)`). However, both standard deviation and sample size (n = `r hare_weight_stats$sample_size[1]` for females and n = `r hare_weight_stats$sample_size[2]` for males) were large.
+Female mean snowshoe hare weight (`r hare_weight_stats$mean_weight[1]` $\pm$ `r hare_weight_stats$sd_weight[1]`) was found to be significantly lower than male mean hare weight (`r hare_weight_stats$mean_weight[2]` $\pm$ `r hare_weight_stats$sd_weight[2]`) (mean $\pm$ 1 standard deviation) (Welch t-test: t(`r round(weight_ttest$parameter, 1)`) = `r round(weight_ttest$statistic, 3)`; p = `r round(weight_ttest$p.value, 3)`). However, both standard deviation and sample size (*n* = `r hare_weight_stats$sample_size[1]` for females and *n* = `r hare_weight_stats$sample_size[2]` for males) were large.
 
 Since there was a large sample size which can disproportionately affect the statistical significance of the p-value, Cohen's *d* was also used to assess effect size (Cohen's *d* = `r round(weight_cohen_d$estimate, 2)`). Since the effect size was small, it is unlikely that a practical difference exists between the male and female weights. 
-<br>
 
 #### Relationship between juvenile weight and hind foot length
 
@@ -266,37 +263,48 @@ The predicted weight was described using regression Equation 1:
 ```{r}
 extract_eq(model = hare_lm, use_coefs = TRUE)
 ```
-The slope (`r round(hare_lm_tidy$estimate[2], 2)`) of Equation 1 indicates that for every 1 mm increase in hind foot length, we would expect the hare weight to increase by `r round(hare_lm_tidy$estimate[2], 2)` grams. 
+The slope (`r round(hare_lm_tidy$estimate[2], 2)`) of Equation 1 indicates that on average for every 1 mm increase in hind foot length, we would expect the hare weight to increase by `r round(hare_lm_tidy$estimate[2], 2)` grams. 
 
-The results of the regression are suspect due to the lack of meeting the assumptions for a linear regression model, most notably the heteroscedasticity of the residuals and the lack of normality of the residuals in the Q-Q plot. The linearity and independence of errors assumptions seemed to be met. Additionally, since the model only explains `r (round(hare_lm_glance$r.squared, 3)*100)`% of the variance for hare weight, it is likely that other variables are influencing the model that are not analyzed here. Logically, it also seems likely that hind foot length alone is not an appropriate predictor of hare weight. 
+The results of the regression are suspect due to a lack of meeting the assumptions for a linear regression model, most notably the heteroscedasticity of the residuals and the lack of normality of the residuals in the Q-Q plot. The linearity and independence of errors assumptions seemed to be met. Additionally, since the model only explains `r (round(hare_lm_glance$r.squared, 3)*100)`% of the variance for hare weight, it seems likely that other variables are influencing the model that are not analyzed in this report. Logically, it also seems likely that hind foot length alone is not an appropriate predictor of hare weight. 
 
 
 ## Summary of Findings
 
+The Kielland et al. (2017) open source Bonanza Creek LTER data from a capture-recapture study conducted on snowshoe hares from 1998-2012 yielded several results:
+
+ - Total number of juvenile hare trappings decreased over the study period, though it was not relative to sampling effort, so it is not likely to be reflective of relative population change over time.
+ - Juvenile hare weights were highly variable. Though there was a relative difference found between male (larger) and female (smaller) weights, it is unlikely to represent a real world practical difference.
+ - A moderate positive correlation was found between juvenile hare weight and hind foot length, but the regression (predictor) model did not seem to be a good fit. It is likely that other variables are influencing hare weight.
+ 
+Next steps:
+
+- Continue to explore the data set to see if there are other variables that could be added to the regression model. 
+- Compare some of the juvenile trends to adult hare trends to see if there are similarities. 
+- Explore the trapping data using a measure of effort to standardize across sampling years.
 
 
 ## Citations
 
 Bonanza Creek Long Term Ecological Research (LTER) program website (https://www.lter.uaf.edu/)
 
-Feierabend, Dashiell, Knut Kielland, Movements, activity patterns, and habitat use of snowshoe hares (Lepus americanus) in interior Alaska, Journal of Mammalogy, Volume 95, Issue 3, 26 June 2014, Pages 525–533, https://doi.org/10.1644/13-MAMM-A-199
+Feierabend, D., K. Kielland. Movements, activity patterns, and habitat use of snowshoe hares (*Lepus americanus*) in interior Alaska, Journal of Mammalogy, Volume 95, Issue 3, 26 June 2014, Pages 525–533, https://doi.org/10.1644/13-MAMM-A-199
 
 Flora, B.K. 2002. Comparison of snowshoe hare populations in Interior Alaska. M.S. Thesis. University of Alaska-Fairbanks.
 
-Grolemund, Garrett, and Hadley Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical Software, 40(3), 1-25. URL https://www.jstatsoft.org/v40/i03/.
+Grolemund, G., and H. Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical Software, 40(3), 1-25. URL https://www.jstatsoft.org/v40/i03/.
 
 Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
 
-McGill, R., Tukey, J. W. and Larsen, W. A. (1978) Variations of box plots. The American Statistician 32, 12-16.
+McGill, R., Tukey, J.W. and Larsen, W.A. (1978) Variations of box plots. The American Statistician 32, 12-16.
 
-Müller, Kirill (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1. https://CRAN.R-project.org/package=here
+Müller, K. (2020). here: A Simpler Way to Find Your Files. R package version 1.0.1. https://CRAN.R-project.org/package=here
 
 R Core Team (2021). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-Torchiano M (2020). effsize: Efficient Effect Size Computation. doi: 10.5281/zenodo.1480624 (URL:
+Torchiano M. (2020). effsize: Efficient Effect Size Computation. doi: 10.5281/zenodo.1480624 (URL:
 https://doi.org/10.5281/zenodo.1480624), R package version 0.8.1, <URL:
 https://CRAN.R-project.org/package=effsize>.
 
-Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
+Wickham, H. et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
 
-Zhu, Hao (2021). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version 1.3.4. https://CRAN.R-project.org/package=kableExtra
+Zhu, H. (2021). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version 1.3.4. https://CRAN.R-project.org/package=kableExtra
