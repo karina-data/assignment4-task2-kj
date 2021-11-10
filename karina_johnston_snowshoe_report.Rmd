@@ -24,38 +24,39 @@ library(effsize) # for Cohen's d effect size
 
 ## Introduction
 
-Bonanza Creek Long Term Ecological Research (LTER) program is part of the US LTER Network. In this report, the counts, sizes, and other characteristics of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. Snowshoe hares, *Lepus americanus*, are a 'keystone' prey species in northern boreal forests (Kielland et al. 2017); hare populations have been known to vary seasonally and in response to changing conditions such as food availability (Feierabend et al. 2014). 
+Snowshoe hares, *Lepus americanus*, are a keystone prey species in northern boreal forests (Kielland et al. 2017); hare populations have been known to vary seasonally and in response to changing conditions such as food availability (Feierabend et al. 2014). Snowshoe hare population abundance and density in Alaska are studied by the Bonanza Creek Long Term Ecological Research (LTER) program, which is part of the US LTER Network (https://www.lter.uaf.edu/). In this report, the counts, sizes, and other characteristics of juvenile snowshoe hares recorded in a database from 1998 - 2012 will be explored. 
 
-Specific relationships and visualizations that will be explored for juvenile hares include annual counts, juvenile weights (g) by sex and site location, and an exploratory analysis to look at the potential relationship between juvenile weights (g) and hind foot length (mm). 
-
-Data are provided by the Bonanza Creek LTER, a partnership between the University of Alaska Fairbanks, and the U.S. Forest Service. Experimental design and data colleciton methods can be found in Flora (2002). Significant funding for collection of these data was provided by the National Science Foundation Long-Term Ecological Research program (NSF Grant numbers DEB-1636476, DEB-1026415, DEB-0620579, DEB-0423442, DEB-0080609, DEB-9810217, DEB-9211769, DEB-8702629) and by the USDA Forest Service, Pacific Northwest Research Station (Agreement # RJVA-PNW-01-JV-11261952-231).
-
-
-```{r}
+```{r, include = FALSE}
 # read in the data from the .csv file
 bonanza_hares <- read_csv(here("data", "bonanza_hares.csv"))
 ```
 
-
 ## Data and Analyses
 
-Capture-recapture studies were conducted on snowshoe hares at five sites in the Tanana Valley. 
+Kielland et al. (2017) open source LTER data are used from a capture-recapture study conducted on snowshoe hares at five sites in the Tanana Valley, Alaska, USA. Specific relationships and visualizations that will be explored for juvenile hares include annual counts, juvenile weights (g) by sex and site location, and an exploratory analysis to look at the potential relationship between juvenile weights (g) and hind foot length (mm). 
 
+Data are provided by the Bonanza Creek LTER, a partnership between the University of Alaska Fairbanks, and the U.S. Forest Service. Experimental design and data collection methods can be found in Flora (2002). Significant funding for collection of these data was provided by the National Science Foundation Long-Term Ecological Research program (NSF Grant numbers DEB-1636476, DEB-1026415, DEB-0620579, DEB-0423442, DEB-0080609, DEB-9810217, DEB-9211769, DEB-8702629) and by the USDA Forest Service, Pacific Northwest Research Station (Agreement # RJVA-PNW-01-JV-11261952-231).
 
-### Juvenile hare initial investigation
+Specific relationships and visualizations that will be explored for juvenile hares include annual counts, juvenile weights (g) by sex and site location, and an exploratory analysis to look at the potential relationship between juvenile weights (g) and hind foot length (mm). 
+<br>
 
 #### Annual juvenile hare trap counts
 
+The total number of juvenile snowshoe hare trappings are counted for each year of the study (1998 - 2012) in Figure 1. 
+<br>
 
 ```{r, fig.cap = "**Figure 1.** Juvenile Bonanza Creek hare counts by year (1998 - 2012). Data: Kielland et al. 2017.", fig.align = "center"}
 
+# this code chunk mutates the data such that years will be cleanly organized 
 bonanza_newdates <- bonanza_hares %>%  # creates a new dataframe beginning with bonanza_hares
   mutate(date_new = mdy(date)) %>%  # creates a new column using `lubridate::mdy()`
   mutate(year_new = year(date_new))  # creats a new year column
 
-bonanza_juveniles <- bonanza_newdates %>% # creates a new dataframe filtering for juveniles
+# this code chunk creates a new dataframe filtering for juveniles
+bonanza_juveniles <- bonanza_newdates %>%
   filter(age == "j")
 
+# this code chunk creates summary statistics
 bonanza_stats <- bonanza_juveniles %>% # groups by year and counts the number by year
   group_by(year_new) %>% 
   summarize(count = n())
@@ -65,8 +66,9 @@ bonanza_count <- ggplot(data = bonanza_stats, aes(x = year_new, y = count)) +
   geom_col(fill = "cyan4") + # so the bars are not grey
   theme_classic() + # for a cleaner graph with no gridlines
   labs(x = "Year", y = "Number of juvenile hares") + # to have formal axis labels 
-  scale_x_continuous(breaks = 1999:2012) # to clean up the x-axis labels
-
+  scale_x_continuous(breaks = 1999:2012) + # to clean up the x-axis year numbering
+  scale_y_continuous(n.breaks = 11) # to increase the number of y-axis ticks
+  
 bonanza_count
 
 # this code chunk outputs summary statistics for in-line use
@@ -77,13 +79,10 @@ sd_count <- sd(bonanza_stats$count) # to find the standard deviation across year
 median_count <- median(bonanza_stats$count) # to find the median count
 ```
 
-Distribution of juvenile hare counts was positively skewed. 
+Counts of trapped juvenile hares over time were positively skewed, but varied by year with a range of `r min_count` to `r max_count` (min to max). Total trapping counts were generally found to decrease over time, although the data were variable by year. Summary statistics for the annual count totals were also calculated including median annual hare count (`r median_count`) and mean annual hare count (`r round(mean_count, 2)` $\pm$ `r round(sd_count, 2)`) (mean $\pm$ standard deviation). Since the data are heavily weighted by the highest counts in earlier years, the median value may be a more representative measure of central tendency.
 
-maximum count (`r max_count`), minimum count (`r min_count`), mean count (`r round(mean_count, 2)` $\pm$ `r round(sd_count, 2)`), median count (`r median_count`)
-
-
-Mean annual number of juvenile hares trapped was XXX $\pm$ XXXX (mean $\pm$ SD)
-
+The data are presented as absolute counts; therefore, to standardize the results and provide a more representative trend in a future analysis, the counts could be weighted by unit effort. For example, data couple be presented as count/number of traps per unit area.
+<br>
 
 #### Visualize juvenile hare weights
 
@@ -96,7 +95,7 @@ bonanza_juveniles["sex"][bonanza_juveniles["sex"] == "f"] <- "Female" # change "
 
 (both raw data (Figure 2) and summary statistics (Figure 3))
 
-```{r, fig.cap = "Figure 2. INSERT!!!!!"}
+```{r, fig.cap = "**Figure 2.** Raw weight (g) data for Bonanza Creek juvenile snowshoe hares grouped by site and sex.", fig.align = "center"}
 
 # new facet label names for site ("grid") variable
 site.labs <- c("Black Spruce", "Bonanza Mature", "Bonanza Riparian")
@@ -118,7 +117,7 @@ ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, color = sex)) +
 ```
 
 
-```{r, fig.cap = "Figure 3. INSERT!!!!!!!"}
+```{r, fig.cap = "**Figure 3.** Summary weight (g) data for Bonanza Creek juvenile snowshoe hares grouped by site and sex.", fig.align = "center"}
 
 # create a boxplot using bonanza_juveniles dataframe
 ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, fill = sex)) +
