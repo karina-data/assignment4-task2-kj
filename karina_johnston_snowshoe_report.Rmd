@@ -13,20 +13,22 @@ output:
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 # Attach packages
-library(tidyverse)
-library(here)
-library(equatiomatic)
-library(lubridate)
-library(kableExtra)
-library(broom)
-library(effsize)
+library(tidyverse) # graphs and visualizations and many functions
+library(here) # standardized data referencing
+library(equatiomatic) # output professional equations
+library(lubridate) # to mutate the date format
+library(kableExtra) # to create professional tables
+library(broom) # functions for some analyses
+library(effsize) # for Cohen's d effect size
 ```
 
 ## Introduction
 
-Bonanza Creek Long Term Ecological Research (LTER) program is part of the US LTER Network. In this report, the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. Snowshoe hares, *Lepus americanus*, are a 'keystone' prey species in northern boreal forests (Kielland et al. 2017). **INSERT SENTENCES ABOUT WHAT IS IN THIS REPORT.** 
+Bonanza Creek Long Term Ecological Research (LTER) program is part of the US LTER Network. In this report, the counts, sizes, and other characteristics of juvenile snowshoe hares recorded from 1998 - 2012 will be explored. Snowshoe hares, *Lepus americanus*, are a 'keystone' prey species in northern boreal forests (Kielland et al. 2017); hare populations have been known to vary seasonally and in response to changing conditions such as food availability (Feierabend et al. 2014). 
 
-Data are provided by the Bonanza Creek LTER, a partnership between the University of Alaska Fairbanks, and the U.S. Forest Service. Significant funding for collection of these data was provided by the National Science Foundation Long-Term Ecological Research program (NSF Grant numbers DEB-1636476, DEB-1026415, DEB-0620579, DEB-0423442, DEB-0080609, DEB-9810217, DEB-9211769, DEB-8702629) and by the USDA Forest Service, Pacific Northwest Research Station (Agreement # RJVA-PNW-01-JV-11261952-231).
+Specific relationships and visualizations that will be explored for juvenile hares include annual counts, juvenile weights (g) by sex and site location, and an exploratory analysis to look at the potential relationship between juvenile weights (g) and hind foot length (mm). 
+
+Data are provided by the Bonanza Creek LTER, a partnership between the University of Alaska Fairbanks, and the U.S. Forest Service. Experimental design and data colleciton methods can be found in Flora (2002). Significant funding for collection of these data was provided by the National Science Foundation Long-Term Ecological Research program (NSF Grant numbers DEB-1636476, DEB-1026415, DEB-0620579, DEB-0423442, DEB-0080609, DEB-9810217, DEB-9211769, DEB-8702629) and by the USDA Forest Service, Pacific Northwest Research Station (Agreement # RJVA-PNW-01-JV-11261952-231).
 
 
 ```{r}
@@ -85,28 +87,28 @@ Mean annual number of juvenile hares trapped was XXX $\pm$ XXXX (mean $\pm$ SD)
 
 #### Visualize juvenile hare weights
 
+```{r}
+# this code chunk sets up changes in the bonanza_juvenile dataframe column "sex" that are needed later for data visualization
+
+bonanza_juveniles["sex"][bonanza_juveniles["sex"] == "m"] <- "Male" # change "m" to "Male"
+bonanza_juveniles["sex"][bonanza_juveniles["sex"] == "f"] <- "Female" # change "f" to "Female"
+```
+
+(both raw data (Figure 2) and summary statistics (Figure 3))
+
 ```{r, fig.cap = "Figure 2. INSERT!!!!!"}
 
 # new facet label names for site ("grid") variable
 site.labs <- c("Black Spruce", "Bonanza Mature", "Bonanza Riparian")
 names(site.labs) <- c("bonbs", "bonmat", "bonrip")
 
-# new label names for sex (x-variable)
-sex.labs <- c("Female", "Male", "N/A")
-names(sex.labs) <- c("f", "m", "NA")
-
 # create a jitterplot using bonanza_juveniles dataframe
 ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, color = sex)) +
-  geom_jitter(aes(alpha = 0.9), 
-              size = 2.5) +  # change the size and transparency of the points
+  geom_jitter(aes(alpha = 0.9), # change the size and transparency of the points
+              size = 3) +  
   facet_grid(~ grid,
-             labeller = labeller(grid = site.labs, 
-                                 sex = sex.labs)) + # change label names
+             labeller = labeller(grid = site.labs)) + # change label names
 
-  # mutate(grid = case_when(grid == "m" ~ "Male",
-   #               grid == ))
-  # or use recode_factor() to change just the column header - set it equal to the column
-  
   labs(x = "Sex", y = "Weight (g)") +
   theme_bw() + # cleans up the aesthetics of the overall theme
   theme(plot.title = element_text(hjust = 0.5), # centered title
@@ -114,6 +116,7 @@ ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, color = sex)) +
   
   guides(color = "none", alpha = "none") # removes unnecessary legends
 ```
+
 
 ```{r, fig.cap = "Figure 3. INSERT!!!!!!!"}
 
@@ -132,7 +135,7 @@ ggplot(data = bonanza_juveniles, aes(x = sex, y = weight, fill = sex)) +
   guides(fill = "none") # removes unnecessary legend
 ```
 
-INSERT MAIN TAKEAWAY TEXT. (both raw data (Figure 2) and summary statistics (Figure 3))
+INSERT MAIN TAKEAWAY TEXT.
 
 
 #### Juvenile weight comparison 
@@ -176,17 +179,23 @@ kable(hare_weight_stats,
 kable_classic(full_width = F)
 ```
 
+```{r}
+bonanza_juveniles %>% 
+  count(sex)
+```
+
+
 
 t-test and effect size
 
 ```{r, include = FALSE}
 weight_male <- bonanza_juveniles %>% # creates a new dataframe for male weights
-  filter(sex == "m") %>% # to filter male weights
+  filter(sex == "Male") %>% # to filter male weights
   drop_na(weight) %>% # to drop the NAs
   pull(weight) # to pull a vector of just weights (easier for t-test)
-  
+
 weight_female <- bonanza_juveniles %>%# creates a new dataframe for female weights
-  filter(sex =="f") %>% # to filter female weights
+  filter(sex =="Female") %>% # to filter female weights
   drop_na(weight) %>% # to drop NAs
   pull(weight) # to pull a vector of just weights (easier for t-test)
 
@@ -199,7 +208,7 @@ weight_cohen_d <- cohen.d(weight_male, weight_female)
 weight_cohen_d # output the cohen d results
 ```
 
-Effect size was small (Cohen's *d* = `r round(weight_cohen_d$estimate, 2)`)
+Since there was a large sample size which can disproportionately affect the statistical significance of the p-value, Cohen's *d* was also used to assess effect size (Cohen's *d* = `r round(weight_cohen_d$estimate, 2)`). Since the effect size was small, it is unlikely that a practical difference exists between the male and female weights. 
 
 #### Relationship between juvenile weight and hind foot length
 
@@ -213,7 +222,7 @@ ggplot(data = bonanza_juveniles, aes(x = hindft,
              color = 4) + # changes color to blue
   theme_classic() + # cleaner graph output
   labs(x = "Hind foot length (mm)", y = "Weight (g)") +
-  guides(color = FALSE, size = FALSE, alpha = FALSE) # removes unnecessary legend
+  guides(color = FALSE, size = FALSE, alpha = FALSE) # removes unnecessary legends
 
 ```
 
@@ -247,6 +256,10 @@ moderate correlation (Pearson's correlation: *r* = `r round(hare_cor$estimate, 2
 
 
 ## Citations
+
+Feierabend, Dashiell, Knut Kielland, Movements, activity patterns, and habitat use of snowshoe hares (Lepus americanus) in interior Alaska, Journal of Mammalogy, Volume 95, Issue 3, 26 June 2014, Pages 525–533, https://doi.org/10.1644/13-MAMM-A-199
+
+Flora, B.K. 2002. Comparison of snowshoe hare populations in Interior Alaska. M.S. Thesis. University of Alaska-Fairbanks.
 
 Grolemund, Garrett, and Hadley Wickham (2011). Dates and Times Made Easy with lubridate. Journal of Statistical Software, 40(3), 1-25. URL https://www.jstatsoft.org/v40/i03/.
 
